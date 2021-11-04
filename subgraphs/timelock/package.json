@@ -11,6 +11,7 @@
     "create-local": "graph create --node http://localhost:8020/ /sushiswap/sushiswap",
     "remove-local": "graph remove --node http://localhost:8020/ /sushiswap/sushiswap",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 /sushiswap/sushiswap",
-    "prepare:mainnet": "mustache config/mainnet.json template.yaml > subgraph.yaml"
+    "prepare:mainnet": "mustache config/mainnet.json template.yaml > subgraph.yaml",
+    "prepare:smartbch": "mustache config/smartbch.json template.yaml > subgraph.yaml"
   }
 }
