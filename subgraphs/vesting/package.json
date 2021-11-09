@@ -18,6 +18,7 @@
         "prepare:matic": ".",
         "prepare:rinkeby": ".",
         "prepare:ropsten": "mustache config/ropsten.json template.yaml > subgraph.yaml",
-        "prepare:xdai": "."
+        "prepare:xdai": ".",
+        "prepare:smartbch": "true"
     }
 }

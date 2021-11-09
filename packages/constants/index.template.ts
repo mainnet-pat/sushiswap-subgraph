@@ -28,7 +28,7 @@ export const LOCKUP_POOL_NUMBER = BigInt.fromI32(29)
 
 export const LOCKUP_BLOCK_NUMBER = BigInt.fromI32(10959148)
 
-export const MASTER_CHEF_START_BLOCK = BigInt.fromI32(10750000)
+export const MASTER_CHEF_START_BLOCK = BigInt.fromI32(989260)
 
 export const UNISWAP_SUSHI_ETH_PAIR_FIRST_LIQUDITY_BLOCK = BigInt.fromI32(10750005)
 
@@ -73,7 +73,7 @@ export const SUSHI_MAKER_ADDRESS = Address.fromString(
 )
 
 export const SUSHI_TOKEN_ADDRESS = Address.fromString(
-  '{{ sushi_address }}{{^sushi_address}}0x0000000000000000000000000000000000000000{{/sushi_address}}'
+  '{{ sushi_token_address }}{{^sushi_token_address}}0x0000000000000000000000000000000000000000{{/sushi_token_address}}'
 )
 
 export const SUSHI_USDT_PAIR_ADDRESS = Address.fromString(

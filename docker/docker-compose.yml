@@ -1,6 +1,7 @@
 version: '3'
 services:
   graph-node:
+    restart: always
     image: graphprotocol/graph-node
     ports:
       - '8000:8000'
@@ -12,14 +13,13 @@ services:
       - ipfs
       - postgres
     environment:
-      RUST_BACKTRACE: full
       postgres_host: postgres
       postgres_user: graph-node
-      postgres_pass: let-me-in
+      postgres_pass: mist
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'smartbch:https://smartbch.fountainhead.cash/mainnet'
-      GRAPH_LOG: info
+      RUST_BACKTRACE: full
+      ethereum: 'smartbch: https://smartbch.fountainhead.cash/mainnet'
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:
@@ -33,7 +33,7 @@ services:
     command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
     environment:
       POSTGRES_USER: graph-node
-      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_PASSWORD: mist
       POSTGRES_DB: graph-node
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
