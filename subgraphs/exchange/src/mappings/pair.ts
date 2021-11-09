@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO, BIG_DECIMAL_ZERO, MASTER_CHEF_ADDRESS, MINIMUM_USD_THRESHOLD_NEW_PAIRS, WHITELIST } from 'const'
+import { ADDRESS_ZERO, BIG_DECIMAL_ZERO, MASTER_CHEF_ADDRESS, MINIMUM_USD_THRESHOLD_NEW_PAIRS, USDT, USDT_WETH_PAIR, WHITELIST } from 'const'
 import { Address, BigDecimal, BigInt, dataSource, log, store } from '@graphprotocol/graph-ts'
 import { Burn, Mint, Pair, Swap, Token, Transaction } from '../../generated/schema'
 import {
@@ -25,7 +25,7 @@ import {
 import { findEthPerToken, getEthPrice } from '../pricing'
 
 const BLACKLIST_EXCHANGE_VOLUME: string[] = [
-  '0x9ea3b5b4ec044b70375236a281986106457b20ef', // DELTA
+  // '0x9ea3b5b4ec044b70375236a281986106457b20ef', // DELTA
 ]
 
 /**

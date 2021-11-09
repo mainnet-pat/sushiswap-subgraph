@@ -5,7 +5,7 @@ set -e
 yarn
 yarn prepare:smartbch
 
-for contract in "masterchef" "bar" "exchange" "dexcandles" "maker"  "timelock"
+for contract in "masterchef" "bar" "exchange" # "dexcandles" "maker"  "timelock"
 do
   pushd subgraphs/$contract
     rm -rf generated build
