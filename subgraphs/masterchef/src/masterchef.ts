@@ -107,6 +107,9 @@ export function getPool(id: BigInt, block: ethereum.Block): Pool {
     pool.sushiHarvested = BIG_DECIMAL_ZERO
     pool.sushiHarvestedUSD = BIG_DECIMAL_ZERO
     pool.save()
+
+    masterChef.poolCount = masterChef.poolCount.plus(BIG_INT_ONE)
+    masterChef.save()
   }
 
   return pool as Pool

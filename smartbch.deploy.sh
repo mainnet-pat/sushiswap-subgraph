@@ -5,7 +5,7 @@ set -e
 yarn
 yarn prepare:smartbch
 
-for contract in "masterchef" "bar" "exchange" # "dexcandles" "maker"  "timelock"
+for contract in "exchange" "masterchef" "bar" # "dexcandles" "maker"  "timelock"
 do
   pushd subgraphs/$contract
     rm -rf generated build
@@ -20,6 +20,7 @@ do
       contract="master-chef"
     fi
 
+    graph remove --node http://localhost:8020/ mistswap/$contract
     graph create --node http://localhost:8020/ mistswap/$contract
     graph deploy --version-label v0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001 mistswap/$contract
   popd
