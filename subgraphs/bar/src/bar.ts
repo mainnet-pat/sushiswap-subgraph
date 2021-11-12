@@ -19,7 +19,7 @@ import { SushiToken as SushiTokenContract } from '../generated/SushiBar/SushiTok
 function getSushiPrice(): BigDecimal {
   const pair = PairContract.bind(SUSHI_USDT_PAIR_ADDRESS)
   const reserves = pair.getReserves()
-  return reserves.value1.toBigDecimal().times(BIG_DECIMAL_1E18).div(reserves.value0.toBigDecimal()).div(BIG_DECIMAL_1E6)
+  return reserves.value1.toBigDecimal().div(reserves.value0.toBigDecimal())
 }
 
 function createBar(block: ethereum.Block): Bar {
@@ -86,6 +86,8 @@ function createUser(address: Address, block: ethereum.Block): User {
   user.xSushiOffset = BIG_DECIMAL_ZERO
   user.sushiOffset = BIG_DECIMAL_ZERO
   user.usdOffset = BIG_DECIMAL_ZERO
+  user.createdAt = block.timestamp
+  user.createdAtBlock = block.number
   user.updatedAt = block.timestamp
 
   return user as User

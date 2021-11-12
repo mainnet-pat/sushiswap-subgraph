@@ -110,6 +110,12 @@ type User @entity {
   # USD In
   usdIn: BigDecimal!
 
+  # Created at
+  createdAt: BigInt!
+
+  # Created at block
+  createdAtBlock: BigInt!
+
   # Updated at
   updatedAt: BigInt!
 

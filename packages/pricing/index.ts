@@ -40,9 +40,7 @@ export function getUSDRate(token: Address, block: ethereum.Block): BigDecimal {
     const reserve1 = reserves.value1.toBigDecimal().times(BIG_DECIMAL_1E18);
 
     const ethPriceUSD = reserve1
-      .div(reserve0)
-      .div(BIG_DECIMAL_1E6)
-      .times(BIG_DECIMAL_1E18);
+      .div(reserve0);
 
     return ethPriceUSD.times(tokenPriceETH);
   }
@@ -101,8 +99,6 @@ export function getSushiPrice(block: ethereum.Block): BigDecimal {
     const reserves = pair.getReserves();
     return reserves.value1
       .toBigDecimal()
-      .times(BIG_DECIMAL_1E18)
-      .div(reserves.value0.toBigDecimal())
-      .div(BIG_DECIMAL_1E6);
+      .div(reserves.value0.toBigDecimal());
   }
 }
