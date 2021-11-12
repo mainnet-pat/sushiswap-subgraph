@@ -5,13 +5,14 @@ set -e
 yarn
 yarn prepare:smartbch
 
-for contract in "exchange" "masterchef" "bar" # "dexcandles" "maker"  "timelock"
+# "exchange" must preceed "masterchef"
+for contract in "masterchef" # "exchange" "masterchef" "bar" # "dexcandles" "maker"  "timelock"
 do
   pushd subgraphs/$contract
     rm -rf generated build
     yarn prepare:smartbch
     yarn codegen
-    yarn build
+    # yarn build
     if [[ $contract = "maker" ]]; then
       contract="sushi-maker"
     fi
