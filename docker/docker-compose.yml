@@ -1,5 +1,32 @@
-version: '3'
+version: '3.7'
 services:
+  bitcoind:
+    image: zquestz/bitcoin-cash-node
+    command: bitcoind -zmqpubhashtx=tcp://*:28332 -zmqpubrawtx=tcp://*:28332 -zmqpubhashblock=tcp://*:28332 -zmqpubrawblock=tcp://*:28332 -txindex=1 -rpcbind=bitcoind -rpcallowip=0.0.0.0/24 -rpcuser=user -rpcpassword=password
+    healthcheck:
+      test: ["CMD", "/entrypoint.sh", "bitcoin-cli", "getblockchaininfo"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    container_name: bitcoind
+    ports:
+      - "127.0.0.1:8332:8332"   # RPC mainnet port
+      - "127.0.0.1:8333:8333"   # p2p mainnet port
+      - "127.0.0.1:28332:28332" # ZMQ port
+    volumes:
+      - ./data/bitcoind:/data
+    restart: always
+  smartbchd:
+    restart: always
+    image: mainnetpat/smartbchd
+    ports:
+      - '127.0.0.1:8545:8545'
+    build:
+      context: smartbchd
+    volumes:
+      - ./data/smartbchd:/root/.smartbchd
+    command: ["start", "--mainnet-genesis-height=698502", "--http.addr=tcp://0.0.0.0:8545"]
   graph-node:
     restart: always
     image: mainnetpat/graph-node
@@ -12,6 +39,7 @@ services:
     depends_on:
       - ipfs
       - postgres
+      - smartbchd
     environment:
       postgres_host: postgres
       postgres_user: graph-node
@@ -19,7 +47,7 @@ services:
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
       RUST_BACKTRACE: full
-      ethereum: 'smartbch:https://smartbch.fountainhead.cash/mainnet'
+      ethereum: 'smartbch:http://smartbchd:8545'
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:
