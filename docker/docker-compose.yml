@@ -26,6 +26,8 @@ services:
       - '127.0.0.1:5001:5001'
     volumes:
       - ./data/ipfs:/data/ipfs
+    environment:
+      IPFS_PROFILE: test
   postgres:
     image: postgres
     ports:
