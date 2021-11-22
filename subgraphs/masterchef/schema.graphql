@@ -240,3 +240,40 @@ type User @entity {
   # Block
   block: BigInt!
 }
+
+# Pair
+type Pair @entity {
+  # Contract address
+  id: ID!
+
+  # Name
+  name: String!
+
+  # Pair day data
+  dayData: [PairDayData!]! @derivedFrom(field: "pair")
+
+  # Created at
+  timestamp: BigInt!
+  block: BigInt!
+
+  # balance of the MasterChef contract
+  masterChefBalance: BigInt!
+}
+
+# Pair day data
+type PairDayData @entity {
+  # pair id - day start timestamp
+  id: ID!
+
+  # Name
+  name: String!
+
+  # date - day start timestamp
+  date: Int!
+
+  # pair
+  pair: Pair!
+
+  # balance of the MasterChef contract
+  masterChefBalance: BigInt!
+}

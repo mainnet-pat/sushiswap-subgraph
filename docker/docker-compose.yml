@@ -47,7 +47,8 @@ services:
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
       RUST_BACKTRACE: full
-      ethereum: 'smartbch:http://smartbchd:8545'
+      # ethereum: 'smartbch:http://smartbchd:8545'
+      ethereum: 'smartbch:https://smartbch.fountainhead.cash/mainnet'
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:

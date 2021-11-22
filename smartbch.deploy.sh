@@ -6,7 +6,7 @@ yarn
 yarn prepare:smartbch
 
 # "exchange" must preceed "masterchef"
-for contract in "exchange" "masterchef" "bar" # "dexcandles" "maker"  "timelock"
+for contract in "masterchef" # "exchange" "masterchef" "bar" # "dexcandles" "maker"  "timelock"
 do
   pushd subgraphs/$contract
     rm -rf generated build

@@ -12,8 +12,12 @@ import {
   UpdatePoolCall,
   Withdraw,
 } from '../generated/MasterChef/MasterChef'
+import {
+  Transfer as TransferEvent,
+} from '../generated/templates/Pair/Pair'
 import { Address, BigDecimal, BigInt, dataSource, ethereum, log } from '@graphprotocol/graph-ts'
 import {
+  ADDRESS_ZERO,
   BIG_DECIMAL_1E12,
   BIG_DECIMAL_1E18,
   BIG_DECIMAL_ZERO,
@@ -23,7 +27,7 @@ import {
   MASTER_CHEF_ADDRESS,
   MASTER_CHEF_START_BLOCK,
 } from 'const'
-import { History, MasterChef, Pool, PoolHistory, User } from '../generated/schema'
+import { History, MasterChef, Pair, PairDayData, Pool, PoolHistory, User } from '../generated/schema'
 import { getSushiPrice, getUSDRate } from 'pricing'
 
 import { ERC20 as ERC20Contract } from '../generated/MasterChef/ERC20'
@@ -73,8 +77,11 @@ export function handleBlock(block: ethereum.Block): void {
       storedPool.timestamp = block.timestamp
       storedPool.block = block.number
       storedPool.updatedAt = block.timestamp
-      const pairContract = PairContract.bind(pool.pair as Address)
-      storedPool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+      // const pairContract = PairContract.bind(pool.pair as Address)
+      // storedPool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+      const pairDayData = loadPairDayData(pool.pair as Address, block)
+      pool.balance = pairDayData.masterChefBalance
+      pool.slpBalance = pool.balance.divDecimal(BIG_DECIMAL_1E18)
     }
     storedPool.save()
   }
@@ -339,7 +346,9 @@ export function deposit(event: Deposit): void {
   const poolHistory = getPoolHistory(pool, event.block)
 
   const pairContract = PairContract.bind(poolInfo.value0)
-  pool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+  // pool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+  const pairDayData = loadPairDayData(poolInfo.value0 as Address, event.block)
+  pool.balance = pairDayData.masterChefBalance
 
   pool.lastRewardBlock = poolInfo.value2
   pool.accSushiPerShare = poolInfo.value3
@@ -496,7 +505,10 @@ export function withdraw(event: Withdraw): void {
   const poolHistory = getPoolHistory(pool, event.block)
 
   const pairContract = PairContract.bind(poolInfo.value0)
-  pool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+  // pool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+  const pairDayData = loadPairDayData(poolInfo.value0 as Address, event.block)
+  pool.balance = pairDayData.masterChefBalance
+
   pool.lastRewardBlock = poolInfo.value2
   pool.accSushiPerShare = poolInfo.value3
 
@@ -633,8 +645,10 @@ export function emergencyWithdraw(event: EmergencyWithdraw): void {
 
   const pool = getPool(event.params.pid, event.block)
 
-  const pairContract = PairContract.bind(pool.pair as Address)
-  pool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+  // const pairContract = PairContract.bind(pool.pair as Address)
+  // pool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+  const pairDayData = loadPairDayData(pool.pair as Address, event.block)
+  pool.balance = pairDayData.masterChefBalance
   pool.save()
 
   // Update user
@@ -650,4 +664,78 @@ export function ownershipTransferred(event: OwnershipTransferred): void {
     event.params.previousOwner.toHex(),
     event.params.newOwner.toHex(),
   ])
+}
+
+export function onPairTransfer(event: TransferEvent): void {
+  if (event.block.number.lt(MASTER_CHEF_START_BLOCK)) {
+    return
+  }
+
+  if (event.params.to != MASTER_CHEF_ADDRESS || event.params.from != MASTER_CHEF_ADDRESS) {
+    return
+  }
+
+  const pair = getPair(event.address, event.block) as Pair
+  const pairDayData = getPairDayData(pair, event.block)
+
+  // liquidity token amount being transfered
+  const value = event.params.value
+
+  if (event.params.to == MASTER_CHEF_ADDRESS) {
+    pair.masterChefBalance = pair.masterChefBalance.plus(value)
+    pair.save()
+  } else if (event.params.from == MASTER_CHEF_ADDRESS) {
+    pair.masterChefBalance = pair.masterChefBalance.minus(value)
+    pair.save()
+  }
+
+  pairDayData.masterChefBalance = pair.masterChefBalance
+  pairDayData.save()
+}
+
+export function getPair(
+  address: Address,
+  block: ethereum.Block = null,
+): Pair | null {
+  let pair = Pair.load(address.toHex())
+
+  if (pair === null) {
+    pair = new Pair(address.toHex())
+
+    pair.name = address.toHex()
+
+    pair.masterChefBalance = BIG_INT_ZERO
+
+    pair.timestamp = block.timestamp
+    pair.block = block.number
+  }
+
+  return pair as Pair
+}
+
+export function getPairDayData(pair: Pair, block: ethereum.Block): PairDayData {
+  const day = block.timestamp.div(BIG_INT_ONE_DAY_SECONDS)
+
+  const id = pair.id.concat(day.toString())
+
+  let dayData = PairDayData.load(id)
+
+  if (dayData === null) {
+    dayData = new PairDayData(id)
+    dayData.pair = pair.id
+    dayData.masterChefBalance = pair.masterChefBalance
+    dayData.date = day.toI32()
+  }
+
+  return dayData as PairDayData
+}
+
+export function loadPairDayData(pairAddress: Address, block: ethereum.Block): PairDayData {
+  const day = block.timestamp.div(BIG_INT_ONE_DAY_SECONDS)
+
+  const id = pairAddress.toHex().concat(day.toString())
+
+  let dayData = PairDayData.load(id)
+
+  return dayData as PairDayData
 }
