@@ -11,6 +11,9 @@ import {
   UNISWAP_SUSHI_ETH_PAIR_FIRST_LIQUDITY_BLOCK, // mist/wbch
   USDT_ADDRESS, // flexusd
   WETH_ADDRESS, // wbch
+  MISTSWAP_WBCH_BCUSDT_FIRST_LIQUIDITY_BLOCK,
+  MISTSWAP_WBCH_BCUSDT_PAIR_ADDRESS,
+  MISTSWAP_WBCH_FLEXUSD_PAIR_ADDRESS
 } from "const";
 import {
   Address,
@@ -24,28 +27,24 @@ import { Factory as FactoryContract } from "exchange/generated/Factory/Factory";
 import { Pair as PairContract } from "exchange/generated/Factory/Pair";
 
 export function getUSDRate(token: Address, block: ethereum.Block): BigDecimal {
-  const usdt = BIG_DECIMAL_ONE;
+  const address = block.number.lt(MISTSWAP_WBCH_BCUSDT_FIRST_LIQUIDITY_BLOCK) ?
+    MISTSWAP_WBCH_FLEXUSD_PAIR_ADDRESS :
+    MISTSWAP_WBCH_BCUSDT_PAIR_ADDRESS;
 
-  if (token != USDT_ADDRESS) {
-    const address = SUSHISWAP_WETH_USDT_PAIR_ADDRESS;
+  const tokenPriceETH = getEthRate(token, block);
 
-    const tokenPriceETH = getEthRate(token, block);
+  const pair = PairContract.bind(address);
 
-    const pair = PairContract.bind(address);
+  const reserves = pair.getReserves();
 
-    const reserves = pair.getReserves();
+  const reserve0 = reserves.value0.toBigDecimal().times(BIG_DECIMAL_1E18);
 
-    const reserve0 = reserves.value0.toBigDecimal().times(BIG_DECIMAL_1E18);
+  const reserve1 = reserves.value1.toBigDecimal().times(BIG_DECIMAL_1E18);
 
-    const reserve1 = reserves.value1.toBigDecimal().times(BIG_DECIMAL_1E18);
+  const ethPriceUSD = reserve1
+    .div(reserve0);
 
-    const ethPriceUSD = reserve1
-      .div(reserve0);
-
-    return ethPriceUSD.times(tokenPriceETH);
-  }
-
-  return usdt;
+  return ethPriceUSD.times(tokenPriceETH);
 }
 
 export function getEthRate(token: Address, block: ethereum.Block): BigDecimal {

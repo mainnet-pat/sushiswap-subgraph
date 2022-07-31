@@ -196,3 +196,21 @@ export const WHITELIST: string[] = '{{ whitelist }}'.split(',')
 // ];
 
 const CUSTOM_BASES = new Map<string, string>()
+
+export const FLEXUSD_ADDRESS = Address.fromString(
+  '0x7b2b3c5308ab5b2a1d9a94d20d35ccdf61e05b72'
+)
+
+export const MISTSWAP_WBCH_FLEXUSD_PAIR_ADDRESS = Address.fromString(
+  '0x24f011f12ea45afadb1d4245ba15dcab38b43d13'
+)
+
+export const MISTSWAP_WBCH_BCUSDT_FIRST_LIQUIDITY_BLOCK = BigInt.fromI32(5142190)
+
+export const MISTSWAP_WBCH_BCUSDT_PAIR_ADDRESS = Address.fromString(
+  '0x27580618797a2ce02fdfbbee948388a50a823611'
+)
+
+export const MISTSWAP_BCUSDT_ADDRESS = Address.fromString(
+  '0xbc2f884680c95a02cea099da2f524b366d9028ba'
+)

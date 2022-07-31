@@ -1,4 +1,4 @@
-import { ADDRESS_ZERO, BIG_DECIMAL_ZERO, MASTER_CHEF_ADDRESS, MINIMUM_USD_THRESHOLD_NEW_PAIRS, USDT, USDT_WETH_PAIR, WHITELIST } from 'const'
+import { ADDRESS_ZERO, BIG_DECIMAL_ZERO, MASTER_CHEF_ADDRESS, MINIMUM_USD_THRESHOLD_NEW_PAIRS, USDT, USDT_WETH_PAIR, WETH_ADDRESS, WHITELIST } from 'const'
 import { Address, BigDecimal, BigInt, dataSource, log, store } from '@graphprotocol/graph-ts'
 import { Burn, Mint, Pair, Swap, Token, Transaction } from '../../generated/schema'
 import {
@@ -22,7 +22,7 @@ import {
   updatePairHourData,
   updateTokenDayData,
 } from '../enitites'
-import { findEthPerToken, getEthPrice } from '../pricing'
+import { getEthRate, getUSDRate } from 'pricing'
 
 const BLACKLIST_EXCHANGE_VOLUME: string[] = [
   // '0x9ea3b5b4ec044b70375236a281986106457b20ef', // DELTA
@@ -328,11 +328,11 @@ export function onSync(event: SyncEvent): void {
   // update ETH price now that reserves could have changed
   const bundle = getBundle()
   // Pass the block so we can get accurate price data before migration
-  bundle.ethPrice = getEthPrice(event.block)
+  bundle.ethPrice = getUSDRate(WETH_ADDRESS, event.block)
   bundle.save()
 
-  token0.derivedETH = findEthPerToken(token0 as Token)
-  token1.derivedETH = findEthPerToken(token1 as Token)
+  token0.derivedETH = getEthRate(Address.fromString(pair.token0), event.block)
+  token1.derivedETH = getEthRate(Address.fromString(pair.token1), event.block)
   token0.save()
   token1.save()
 
