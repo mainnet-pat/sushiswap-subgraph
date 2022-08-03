@@ -201,11 +201,17 @@ export const FLEXUSD_ADDRESS = Address.fromString(
   '0x7b2b3c5308ab5b2a1d9a94d20d35ccdf61e05b72'
 )
 
+export const MISTSWAP_WBCH_FLEXUSD_PAIR =
+  '0x24f011f12ea45afadb1d4245ba15dcab38b43d13'
+
 export const MISTSWAP_WBCH_FLEXUSD_PAIR_ADDRESS = Address.fromString(
   '0x24f011f12ea45afadb1d4245ba15dcab38b43d13'
 )
 
 export const MISTSWAP_WBCH_BCUSDT_FIRST_LIQUIDITY_BLOCK = BigInt.fromI32(5142190)
+
+export const MISTSWAP_WBCH_BCUSDT_PAIR =
+  '0x27580618797a2ce02fdfbbee948388a50a823611'
 
 export const MISTSWAP_WBCH_BCUSDT_PAIR_ADDRESS = Address.fromString(
   '0x27580618797a2ce02fdfbbee948388a50a823611'

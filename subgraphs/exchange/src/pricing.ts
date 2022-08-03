@@ -7,6 +7,9 @@ import {
   DAI_WETH_PAIR,
   FACTORY_ADDRESS,
   MINIMUM_LIQUIDITY_THRESHOLD_ETH,
+  MISTSWAP_WBCH_BCUSDT_FIRST_LIQUIDITY_BLOCK,
+  MISTSWAP_WBCH_BCUSDT_PAIR,
+  MISTSWAP_WBCH_FLEXUSD_PAIR,
   NATIVE,
   SUSHI_USDT_PAIR,
   USDC,
@@ -63,10 +66,14 @@ export function getEthPrice(block: ethereum.Block = null): BigDecimal {
     return ethPrice
   }*/
 
+  const address = block.number.lt(MISTSWAP_WBCH_BCUSDT_FIRST_LIQUIDITY_BLOCK) ?
+    MISTSWAP_WBCH_FLEXUSD_PAIR :
+    MISTSWAP_WBCH_BCUSDT_PAIR;
+
   // fetch eth prices for each stablecoin
   const daiPair = Pair.load(DAI_WETH_PAIR)
   const usdcPair = Pair.load(USDC_WETH_PAIR)
-  const usdtPair = Pair.load(USDT_WETH_PAIR)
+  const usdtPair = Pair.load(address)
 
   // if (daiPair !== null) {
   //   log.warning('Dai Pair {} {}', [
