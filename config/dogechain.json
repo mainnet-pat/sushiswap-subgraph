@@ -5,6 +5,7 @@
   "sushi_bar_address": "0x5108e68a50cfa3306c643af1bc8b105597c823d9",
   "sushi_maker_address": "0x7a706e1a73fbe030e6a132ab637279828f9d723d",
   "sushi_token_address": "0x95d366dc75ee657a977683d84546163b4e905a15",
+  "sushi_address": "0x95d366dc75ee657a977683d84546163b4e905a15",
   "sushi_usdt_pair_address": "0xec06a5356a10143a5D953E75fD81DC6eA2d03Bfc",
   "xsushi_usdc_pair_address": "0x20D8cD86C0176F7de5E5Fd5A6E2B58823BBad891",
   "xsushi_weth_pair_address": "0x56632cc8b74a1bee3f8f0032c50c87ad9514fdda",
