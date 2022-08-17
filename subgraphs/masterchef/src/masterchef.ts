@@ -29,6 +29,132 @@ import { getSushiPrice, getUSDRate } from 'pricing'
 import { ERC20 as ERC20Contract } from '../generated/MasterChef/ERC20'
 import { Pair as PairContract } from '../generated/MasterChef/Pair'
 
+export function handleBlock(block: ethereum.Block): void {
+  if (block.number.toI32() % 250 !== 0) {
+    return
+  }
+
+  const masterChef = fetchMasterChef(block)
+  let storedChef = MasterChef.load(MASTER_CHEF_ADDRESS.toHex())
+  if (storedChef == null) {
+    storedChef = masterChef
+  } else {
+    // synchronize
+    storedChef.bonusMultiplier = masterChef.bonusMultiplier
+    storedChef.bonusEndBlock = masterChef.bonusEndBlock
+    storedChef.devaddr = masterChef.devaddr
+    storedChef.migrator = masterChef.migrator
+    storedChef.owner = masterChef.owner
+    // poolInfo ...
+    storedChef.startBlock = masterChef.startBlock
+    storedChef.sushi = masterChef.sushi
+    storedChef.sushiPerBlock = masterChef.sushiPerBlock
+    storedChef.totalAllocPoint = masterChef.totalAllocPoint
+    // userInfo ...
+    storedChef.poolCount = masterChef.poolCount
+    storedChef.totalAllocPoint = masterChef.totalAllocPoint
+    storedChef.updatedAt = block.timestamp
+  }
+
+  storedChef.save()
+
+  // sync pools
+  for (let i=0; i < storedChef.poolCount.toI32(); i++) {
+    const pool = fetchPool(BigInt.fromI32(i), block);
+    let storedPool = Pool.load(i.toString())
+    if (storedPool == null) {
+      storedPool = pool
+    } else {
+      // synchronize
+      storedPool.pair = pool.pair
+      storedPool.allocPoint = pool.allocPoint
+      storedPool.lastRewardBlock = pool.lastRewardBlock
+      storedPool.accSushiPerShare = pool.accSushiPerShare
+      storedPool.timestamp = block.timestamp
+      storedPool.block = block.number
+      storedPool.updatedAt = block.timestamp
+      const pairContract = PairContract.bind(pool.pair as Address)
+      storedPool.balance = pairContract.balanceOf(MASTER_CHEF_ADDRESS)
+    }
+    storedPool.save()
+  }
+
+  log.info("Synchronized chef and pools at height {}", [block.number.toString()])
+}
+
+function fetchMasterChef(block: ethereum.Block): MasterChef {
+  const contract = MasterChefContract.bind(MASTER_CHEF_ADDRESS)
+  const masterChef = new MasterChef(MASTER_CHEF_ADDRESS.toHex())
+  masterChef.bonusMultiplier = contract.BONUS_MULTIPLIER()
+  masterChef.bonusEndBlock = contract.bonusEndBlock()
+  masterChef.devaddr = contract.devaddr()
+  masterChef.migrator = contract.migrator()
+  masterChef.owner = contract.owner()
+  // poolInfo ...
+  masterChef.startBlock = contract.startBlock()
+  masterChef.sushi = contract.sushi()
+  masterChef.sushiPerBlock = contract.sushiPerBlock()
+  masterChef.totalAllocPoint = contract.totalAllocPoint()
+  // userInfo ...
+  masterChef.poolCount = contract.poolLength()
+  masterChef.totalAllocPoint = contract.totalAllocPoint()
+
+  masterChef.slpBalance = BIG_DECIMAL_ZERO
+  masterChef.slpAge = BIG_DECIMAL_ZERO
+  masterChef.slpAgeRemoved = BIG_DECIMAL_ZERO
+  masterChef.slpDeposited = BIG_DECIMAL_ZERO
+  masterChef.slpWithdrawn = BIG_DECIMAL_ZERO
+
+  masterChef.updatedAt = block.timestamp
+
+  return masterChef
+}
+
+function fetchPool(id: BigInt, block: ethereum.Block): Pool {
+  const masterChef = getMasterChef(block)
+
+  const masterChefContract = MasterChefContract.bind(MASTER_CHEF_ADDRESS)
+  const poolLength = masterChefContract.poolLength()
+
+  if (id >= poolLength) {
+    return null
+  }
+
+  // Create new pool.
+  let pool = new Pool(id.toString())
+
+  // Set relation
+  pool.owner = masterChef.id
+
+  const poolInfo = masterChefContract.poolInfo(id)
+
+  pool.pair = poolInfo.value0
+  pool.allocPoint = poolInfo.value1
+  pool.lastRewardBlock = poolInfo.value2
+  pool.accSushiPerShare = poolInfo.value3
+
+  // Total supply of LP tokens
+  pool.balance = BIG_INT_ZERO
+  pool.userCount = BIG_INT_ZERO
+
+  pool.slpBalance = BIG_DECIMAL_ZERO
+  pool.slpAge = BIG_DECIMAL_ZERO
+  pool.slpAgeRemoved = BIG_DECIMAL_ZERO
+  pool.slpDeposited = BIG_DECIMAL_ZERO
+  pool.slpWithdrawn = BIG_DECIMAL_ZERO
+
+  pool.timestamp = block.timestamp
+  pool.block = block.number
+
+  pool.updatedAt = block.timestamp
+  pool.entryUSD = BIG_DECIMAL_ZERO
+  pool.exitUSD = BIG_DECIMAL_ZERO
+  pool.sushiHarvested = BIG_DECIMAL_ZERO
+  pool.sushiHarvestedUSD = BIG_DECIMAL_ZERO
+
+  return pool
+}
+
 function getMasterChef(block: ethereum.Block): MasterChef {
   let masterChef = MasterChef.load(MASTER_CHEF_ADDRESS.toHex())
 

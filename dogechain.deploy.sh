@@ -3,7 +3,7 @@
 set -e
 
 yarn
-# yarn prepare:dogechain
+yarn prepare:dogechain
 
 # "exchange" must preceed "masterchef"
 for contract in "exchange" "masterchef" "bar" "blocks" "dexcandles" # "maker"  "timelock"
