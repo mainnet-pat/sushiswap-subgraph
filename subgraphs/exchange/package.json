@@ -44,6 +44,7 @@
         "prepare:palm": "mustache ../../config/palm.json template.yaml > subgraph.yaml",
         "prepare:heco": "mustache ../../config/heco.json template.yaml > subgraph.yaml",
         "prepare:fuse": "mustache ../../config/fuse.json template.yaml > subgraph.yaml",
-        "prepare:moonbeam": "mustache ../../config/moonbeam.json template.yaml > subgraph.yaml"
+        "prepare:moonbeam": "mustache ../../config/moonbeam.json template.yaml > subgraph.yaml",
+        "prepare:dogechain": "mustache ../../config/dogechain.json template.yaml > subgraph.yaml"
     }
 }

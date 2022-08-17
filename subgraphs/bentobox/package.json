@@ -31,6 +31,7 @@
     "prepare:rinkeby": ".",
     "prepare:xdai": "mustache config/xdai.json template.yaml > subgraph.yaml",
     "prepare:arbitrum": "mustache config/arbitrum.json template.yaml > subgraph.yaml",
-    "prepare:fuse": "true"
+    "prepare:fuse": "true",
+    "prepare:dogechain": "true"
   }
 }

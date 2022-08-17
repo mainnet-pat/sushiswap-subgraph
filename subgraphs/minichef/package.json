@@ -28,6 +28,7 @@
         "prepare:fuse": "mustache config/fuse.json template.yaml > subgraph.yaml",
         "prepare:moonbeam": "mustache config/moonbeam.json template.yaml > subgraph.yaml",
         "prepare:fantom": "mustache config/fantom.json template.yaml > subgraph.yaml",
-        "prepare:kava": "mustache config/kava.json template.yaml > subgraph.yaml"
+        "prepare:kava": "mustache config/kava.json template.yaml > subgraph.yaml",
+        "prepare:dogechain": "true"
     }
 }

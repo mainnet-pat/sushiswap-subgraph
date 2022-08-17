@@ -80,7 +80,7 @@ export function getSushiPrice(block: ethereum.Block): BigDecimal {
   if (block.number.lt(UNISWAP_SUSHI_ETH_PAIR_FIRST_LIQUDITY_BLOCK)) {
     // If before uniswap sushi-eth pair creation and liquidity added, return zero
     return BIG_DECIMAL_ZERO
-  } else if (block.number.lt(BigInt.fromI32(10800029))) {
+  } else if (block.number.lt(BigInt.fromI32(915975))) {
     // Else if before uniswap sushi-usdt pair creation (get price from eth sushi-eth pair above)
     return getUSDRate(SUSHI_TOKEN_ADDRESS, block)
   } else {

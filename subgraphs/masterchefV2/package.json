@@ -15,6 +15,7 @@
         "deploy-studio": "graph deploy --studio sushi---masterchefv2",
 
         "prepare:mainnet": "mustache config/mainnet.json template.yaml > subgraph.yaml",
-        "prepare:xdai": "."
+        "prepare:xdai": ".",
+        "prepare:dogechain": "true"
     }
 }

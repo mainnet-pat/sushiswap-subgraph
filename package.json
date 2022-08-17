@@ -17,7 +17,8 @@
     "prepare:rinkeby": "yarn workspaces run prepare:rinkeby",
     "prepare:ropsten": "yarn workspaces run prepare:ropsten",
     "prepare:xdai": "yarn workspaces run prepare:xdai",
-    "prepare:fuse": "yarn workspaces run prepare:fuse"
+    "prepare:fuse": "yarn workspaces run prepare:fuse",
+    "prepare:dogechain": "yarn workspaces run prepare:dogechain"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.21.1",

@@ -21,6 +21,7 @@
     "prepare:rinkeby": "true",
     "prepare:ropsten": "true",
     "prepare:xdai": "true",
-    "prepare:fuse": "true"
+    "prepare:fuse": "true",
+    "prepare:dogechain": "true"
   }
 }
